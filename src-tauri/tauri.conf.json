@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "To do",
+  "version": "0.1.0",
+  "identifier": "com.example.todo",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://127.0.0.1:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "To do",
+        "width": 1080,
+        "height": 780,
+        "minWidth": 420,
+        "minHeight": 560,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "decorations": true,
+        "theme": "Light"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": [
+      "icons/t2-32x32.png",
+      "icons/t2-128x128.png",
+      "icons/t2-128x128@2x.png",
+      "icons/t3-icon.ico"
+    ],
+    "copyright": "To do contributors",
+    "category": "Productivity",
+    "shortDescription": "Tasks and calendar",
+    "longDescription": "A local-first task and calendar app",
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "installerIcon": "icons/t3-icon.ico"
+      }
+    }
+  }
+}

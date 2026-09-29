@@ -1,0 +1,5001 @@
+/* ===================== tokens ===================== */
+:root {
+  --bg: #ffffff;
+  --bg-soft: #faf9f7;
+  --bg-sunken: #f4f2ee;
+  --line: #ebe8e2;
+  --line-strong: #d8d3ca;
+  --ink: #23211d;
+  --ink-2: #6b675f;
+  --ink-3: #a29c92;
+  --accent: #2563eb;
+  --accent-soft: #eff4ff;
+  --accent-strong: #1e40af;
+  --amber: #b45309;
+  --amber-soft: #fdf5e6;
+  --red: #b91c1c;
+  --red-soft: #fdf0ef;
+  --hl: #fde68a;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  --side-w: 208px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ===================== layout ===================== */
+.jot-app {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  /* 字体大小设置：用 zoom 整体缩放（等价浏览器缩放，文字/布局等比变化） */
+  zoom: var(--ui-zoom, 1);
+}
+
+.jot-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.jot-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 28px 60px;
+  /* 让 .jot-view.is-wide 用 flex:1 占满高度 */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ===================== sidebar ===================== */
+.jot-side {
+  width: var(--side-w);
+  flex-shrink: 0;
+  background: var(--bg-soft);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 12px 14px;
+  gap: 18px;
+}
+
+.jot-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 8px;
+}
+
+.jot-brand-mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: var(--ink);
+  position: relative;
+}
+
+.jot-brand-mark::after {
+  content: '';
+  position: absolute;
+  left: 3.5px;
+  top: 7px;
+  width: 9px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--bg-soft);
+}
+
+.jot-brand-text {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.jot-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jot-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r-md);
+  color: var(--ink-2);
+  font-size: 14px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.jot-nav-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--ink);
+}
+
+.jot-nav-item.is-active {
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.jot-nav-label {
+  flex: 1;
+  text-align: left;
+}
+
+.jot-nav-badge {
+  min-width: 19px;
+  height: 19px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jot-nav-item.is-active .jot-nav-badge {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.jot-side-foot {
+  margin-top: auto;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ===================== sync ===================== */
+.jot-sync {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--ink-3);
+  padding: 5px 8px;
+  border-radius: var(--r-sm);
+}
+
+.jot-sync:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.jot-sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.jot-sync.s-ok .jot-sync-dot,
+.jot-sync.is-local .jot-sync-dot {
+  background: #16a34a;
+}
+
+.jot-sync.s-syncing .jot-sync-dot {
+  background: var(--accent);
+  animation: jot-pulse 1s ease-in-out infinite;
+}
+
+.jot-sync.s-error .jot-sync-dot {
+  background: var(--red);
+}
+
+@keyframes jot-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ===================== 顶栏：[今天] [大输入框] [日期] ===================== */
+.jot-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.jot-top-brand {
+  flex-shrink: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.jot-top-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.jot-top-input .jot-qa-row {
+  background: var(--bg-sunken);
+}
+
+.jot-top-input .jot-qa-row:focus-within {
+  background: var(--bg);
+  border-color: var(--accent);
+}
+
+/* ===================== quick add ===================== */
+/* 顶栏版：去掉底部那条独立输入框（已挪进顶栏），这里只留元素占位防止残留 */
+.jot-quickadd-wrap {
+  display: none;
+}
+
+.jot-qa-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 0 8px 0 14px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.jot-qa-row:focus-within {
+  border-color: var(--accent);
+}
+
+.jot-qa-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  padding: 11px 0;
+  font-size: 16px;
+}
+
+.jot-qa-input::placeholder {
+  color: var(--ink-3);
+}
+
+.jot-qa-chip {
+  flex-shrink: 0;
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.jot-qa-go {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.jot-qa-go:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.jot-qa-go:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ===================== groups ===================== */
+.jot-view {
+  max-width: 860px;
+  padding-top: 18px;
+}
+
+/* 今天 / 本周这类需要横向铺开的视图：填满主区域 */
+.jot-view.is-wide {
+  max-width: none;
+  width: 100%;
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.jot-group {
+  margin-bottom: 26px;
+}
+
+.jot-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 10px;
+  color: var(--ink-2);
+}
+
+.jot-group-title::before {
+  content: '';
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--line-strong);
+}
+
+.jot-group-title.t-red { color: var(--red); }
+.jot-group-title.t-red::before { background: var(--red); }
+.jot-group-title.t-amber { color: var(--amber); }
+.jot-group-title.t-amber::before { background: var(--amber); }
+.jot-group-title.t-blue { color: var(--accent); }
+.jot-group-title.t-blue::before { background: var(--accent); }
+.jot-group-title.t-gray { color: var(--ink-2); }
+.jot-group-title.t-gray::before { background: var(--line-strong); }
+
+.jot-group-count {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-3);
+  background: var(--bg-sunken);
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.jot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jot-error-boundary {
+  padding: 14px 16px;
+  margin: 8px 0;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.jot-error-boundary h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+.jot-error-boundary .jot-error-msg {
+  margin: 0 0 10px;
+  font-size: 12px;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.jot-error-boundary .jot-error-label {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7f1d1d;
+}
+.jot-error-boundary .jot-error-stack {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px dashed #fca5a5;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #9f1239;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 160px;
+  overflow: auto;
+}
+
+.jot-empty {
+  color: var(--ink-3);
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+/* ===================== card ===================== */
+.jot-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--r-lg);
+  border: 1px solid transparent;
+  transition: background 0.12s, border-color 0.12s;
+  position: relative;
+}
+
+.jot-card:not(.is-editing):hover {
+  background: var(--bg-soft);
+}
+
+.jot-card.is-editing {
+  background: var(--bg);
+  border-color: var(--line-strong);
+  padding: 10px 12px 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.jot-card.is-done .jot-html {
+  color: var(--ink-3);
+  text-decoration: line-through;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1.5px;
+}
+
+.jot-card.is-overdue {
+  background: var(--red-soft);
+}
+
+.jot-card.is-overdue:not(.is-editing):hover {
+  background: #fbe9e7;
+}
+
+/* 待定日程：虚线 + 斜纹 */
+.jot-card.k-event.is-tentative:not(.is-editing) {
+  border-color: var(--amber);
+  border-style: dashed;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 6px,
+    rgba(180, 83, 9, 0.05) 6px,
+    rgba(180, 83, 9, 0.05) 12px
+  );
+}
+
+.jot-card.is-deleted {
+  opacity: 0.6;
+}
+
+.jot-card-body {
+  flex: 1;
+  min-width: 0;
+  cursor: text;
+}
+
+/* 收起态正文：锁定与标记一致的行高，并清掉 <p> 默认外边距，
+   这样圆圈 / 圆点能精确垂直居中对齐到「第一行文字」，不再吊在左上角 */
+.jot-html {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  /* 折叠视图只显示第一行（编辑视图用 .jot-prose，不受影响）。
+     text-overflow: clip —— 不要「...」省略号，按用户要求直接截断 */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.jot-html p {
+  margin: 0;
+}
+
+.jot-html > :first-child {
+  margin-top: 0;
+}
+
+.jot-html > :last-child {
+  margin-bottom: 0;
+}
+
+.jot-card-body:focus-visible {
+  outline: none;
+}
+
+/* 标记容器：高度锁定为一行文字的行高，
+   这样圆圈 / 圆点垂直居中于第一行，而不是吊在左上角 */
+.jot-mark {
+  flex-shrink: 0;
+  height: 1.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 日程竖条贯穿整个卡片高度，所以不锁高度 */
+.jot-mark.is-bar {
+  align-self: stretch;
+  height: auto;
+}
+
+/* 标记：task 圆形勾选 / event 竖条 / note 圆点
+   颜色统一由 --mk 驱动，便于右键改色 */
+.jot-check {
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid var(--mk);
+  border-radius: 50%;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.14s, border-color 0.14s;
+}
+
+.jot-check:hover {
+  border-color: var(--mk);
+  background: color-mix(in srgb, var(--mk) 12%, transparent);
+}
+
+.jot-check.is-done {
+  background: var(--mk);
+  border-color: var(--mk);
+  color: #fff;
+}
+
+.jot-bar {
+  width: 3px;
+  align-self: stretch;
+  min-height: 20px;
+  border-radius: 2px;
+  background: var(--mk);
+  margin: 2px 7px 2px 3px;
+}
+
+.jot-card.is-tentative .jot-bar {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--mk) 0 3px,
+    transparent 3px 6px
+  );
+}
+
+.jot-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mk);
+}
+
+/* 标记配色：默认按类型，右键可覆盖 */
+.jot-card {
+  --mk: #8a857c;
+}
+.jot-card.k-event {
+  --mk: var(--amber);
+}
+.jot-card.k-note {
+  --mk: #b5afa4;
+}
+.jot-card[data-cat='school'] { --mk: #dc2626; }
+.jot-card[data-cat='club'] { --mk: #7c3aed; }
+.jot-card[data-cat='diy'] { --mk: #d97706; }
+.jot-card[data-cat='health'] { --mk: #16a34a; }
+.jot-card[data-cat='portfolio'] { --mk: #2563eb; }
+.jot-card[data-cat='exam'] { --mk: #ca8a04; }
+.jot-card[data-cat='admission'] { --mk: #0d9488; }
+.jot-card[data-cat='other'] { --mk: #78716c; }
+/* 没标签时 --mk 由内联 style 设为 var(--ink-3)，这里兜底 */
+.jot-card:not([data-cat]) { --mk: var(--ink-3); }
+
+.jot-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.jot-meta-time {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.jot-meta-date {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.jot-meta-date.is-overdue {
+  color: var(--red);
+}
+
+/* 重复任务「→ M/D」截止日：刻意做大并加粗，避免用户看不到(误以为它只在最后一天出现) */
+.jot-meta-until {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 最后一天标记 */
+.jot-meta-last {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-weight: 500;
+}
+
+/* 每日重复任务标记：圆形 + ↻，比之前更显眼（13px 字号 + 主题强调色实心底） */
+.jot-meta-recurring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.18);
+}
+
+.jot-card.is-recurring {
+  /* 左边内嵌条（"左括号"）跟随当前任务的标签颜色：标签决定 --mk，
+     没标签时 --mk 已被 EntryCard 内联 style 兜底成 var(--ink-3)，灰色也能识别 */
+  box-shadow: inset 4px 0 0 var(--mk);
+}
+
+.jot-meta-ten {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  border: 1px dashed var(--amber);
+  color: var(--amber);
+}
+
+/* 自动分类角标：用对应类别的固定色（跟随主题强调色系） */
+.jot-meta-cat {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  color: var(--ink-2);
+}
+.jot-meta-cat.cat-school { color: #dc2626; border-color: #dc262633; }
+.jot-meta-cat.cat-club { color: #7c3aed; border-color: #7c3aed33; }
+.jot-meta-cat.cat-diy { color: #d97706; border-color: #d9770633; }
+.jot-meta-cat.cat-health { color: #16a34a; border-color: #16a34a33; }
+.jot-meta-cat.cat-portfolio { color: #2563eb; border-color: #2563eb33; }
+.jot-meta-cat.cat-exam { color: #ca8a04; border-color: #ca8a0433; }
+.jot-meta-cat.cat-admission { color: #0d9488; border-color: #0d948833; }
+.jot-meta-cat.cat-other { color: #78716c; border-color: #78716c33; }
+
+.jot-deleted-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.jot-text-btn {
+  font-size: 12px;
+  color: var(--ink-3);
+  padding: 2px 0;
+}
+
+.jot-text-btn:hover {
+  color: var(--ink);
+}
+
+.jot-text-btn.is-danger:hover {
+  color: var(--red);
+}
+
+/* ===================== card head (editing) ===================== */
+.jot-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.jot-kindpick {
+  display: flex;
+  gap: 3px;
+  background: var(--bg-sunken);
+  border-radius: var(--r-md);
+  padding: 2px;
+}
+
+.jot-kindpill {
+  padding: 3px 11px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  color: var(--ink-3);
+  transition: color 0.12s;
+}
+
+.jot-kindpill:hover {
+  color: var(--ink-2);
+}
+
+.jot-kindpill.is-active {
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.jot-kindpill.kp-task.is-active { color: var(--accent); }
+.jot-kindpill.kp-event.is-active { color: var(--amber); }
+
+.jot-card-head-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.jot-date-input,
+.jot-time-input {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  padding: 3px 7px;
+  font-size: 16px;
+  color: var(--ink-2);
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.jot-date-input:focus,
+.jot-time-input:focus {
+  border-color: var(--accent);
+}
+
+/* 日程：开始 – 结束 双时间输入 */
+.jot-time-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.jot-time-sep {
+  color: var(--ink-3);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.jot-ten-toggle {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: var(--r-sm);
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-3);
+  background: none;
+  cursor: pointer;
+}
+
+.jot-ten-toggle:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.jot-ten-toggle.is-on {
+  border-style: solid;
+  border-color: var(--amber);
+  color: var(--amber);
+  background: var(--amber-soft);
+  font-weight: 500;
+}
+
+.jot-icon-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-sm);
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.jot-icon-btn:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+/* ===================== editor ===================== */
+.jot-editor {
+  min-height: 30px;
+}
+
+.jot-prose {
+  outline: none;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+/* 微信笔记式内嵌图片：截图直接贴在正文里，自适应宽度 */
+.jot-prose img,
+.jot-html img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+  margin: 6px 0;
+  cursor: default;
+}
+
+/* ProseMirror 选中图片时的蓝色描边 */
+.jot-prose img.ProseMirror-selectednode {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.jot-prose > * + * {
+  margin-top: 6px;
+}
+
+.jot-prose p {
+  margin: 0;
+}
+
+.jot-prose h1 { font-size: 20px; font-weight: 500; margin: 10px 0 4px; }
+.jot-prose h2 { font-size: 17px; font-weight: 500; margin: 8px 0 3px; }
+.jot-prose h3 { font-size: 15px; font-weight: 500; margin: 6px 0 2px; }
+
+.jot-prose ul,
+.jot-prose ol {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.jot-prose li + li {
+  margin-top: 2px;
+}
+
+.jot-prose ul[data-type='taskList'] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.jot-prose ul[data-type='taskList'] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.jot-prose ul[data-type='taskList'] li > label {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 撑到与正文一行等高，让圆形勾选框垂直居中对齐到第一行 */
+  min-height: 1.65em;
+  user-select: none;
+  cursor: pointer;
+}
+
+.jot-prose ul[data-type='taskList'] li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 编辑器里的勾选框统一成「圆形」（与左侧大任务 jot-check 风格一致） */
+.jot-prose ul[data-type='taskList'] input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1.5px solid var(--ink-3);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: block;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.jot-prose ul[data-type='taskList'] input[type='checkbox']:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.jot-prose ul[data-type='taskList'] input[type='checkbox']:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.8 2.8L12 6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 11px 11px;
+}
+
+.jot-prose li[data-checked='true'] > div {
+  color: var(--ink-3);
+  text-decoration: line-through;
+}
+
+.jot-prose blockquote {
+  margin: 6px 0;
+  padding-left: 11px;
+  border-left: 3px solid var(--line-strong);
+  color: var(--ink-2);
+}
+
+.jot-prose hr {
+  border: none;
+  border-top: 1px solid var(--line-strong);
+  margin: 10px 0;
+}
+
+.jot-prose code {
+  background: var(--bg-sunken);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+
+.jot-prose mark {
+  background: var(--hl);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.jot-prose p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+/* 只读预览里的任务勾选框不可点击 */
+.jot-html ul[data-type='taskList'] input[type='checkbox'] {
+  pointer-events: none;
+}
+
+.jot-html p.is-empty {
+  color: var(--ink-3);
+}
+
+/* ===================== toolbar ===================== */
+.jot-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex-wrap: wrap;
+  padding: 5px 0 7px;
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+}
+
+.jot-tb-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--line);
+  margin: 0 5px;
+}
+
+.jot-tb-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: var(--r-sm);
+  color: var(--ink-2);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.jot-tb-btn:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+.jot-tb-btn.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.jot-tb-btn.f-bold { font-weight: 600; }
+/* 斜体：去掉 Georgia，改用系统字体的 italic，避免斜体 I 与其他字母基线对不齐 */
+.jot-tb-btn.f-italic { font-style: italic; }
+.jot-tb-btn.f-underline { text-decoration: underline; }
+.jot-tb-btn.f-strike { text-decoration: line-through; }
+/* H 高亮：方块按钮本身就是完美正方形，黄色背景铺满，H 字符居中 */
+.jot-tb-btn.f-hl { background: var(--hl); }
+.jot-tb-btn.f-hl:hover { background: #fcd34d; }
+.jot-tb-btn.f-hl.is-active { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.jot-tb-btn.f-code { font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+/* 无序列表按钮：圆点 + 横线，flex 让横线与圆点垂直居中对齐 */
+.tb-bullet {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1;
+}
+.tb-bullet-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.tb-bullet-line {
+  display: block;
+  width: 10px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+/* 引用 ❝：字符本身边距偏大，稍稍下移与基线对齐 */
+.tb-quote {
+  position: relative;
+  top: 1px;
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* 工具栏里的隐藏 file input：被 label 包裹，点击 label 触发系统选择器 */
+.jot-tb-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ===================== calendar head ===================== */
+.jot-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.jot-cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.jot-cal-title {
+  font-size: 15px;
+  font-weight: 500;
+  min-width: 130px;
+  text-align: center;
+}
+
+/* 月份标题：可点击唤起年/月气泡（hover 出蓝框明示可点） */
+.jot-cal-title-btn {
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.jot-cal-title-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.jot-cal-title-caret {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+/* 年/月选择气泡 */
+.jot-mpop-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 18, 16, 0.18);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.jot-mpop {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+  padding: 18px 20px;
+  min-width: 320px;
+}
+.jot-mpop-year {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.jot-mpop-year-input {
+  font: inherit;
+  font-size: 22px;
+  font-weight: 600;
+  width: 90px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: var(--bg-soft);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.jot-mpop-year-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+.jot-mpop-x {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink-2);
+  margin-left: auto;
+  padding: 0 4px;
+}
+.jot-mpop-x:hover {
+  color: var(--accent);
+}
+.jot-mpop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.jot-mpop-month {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.jot-mpop-month:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.jot-mpop-month.is-current {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.jot-mpop-month.is-today {
+  border-color: var(--accent);
+  border-style: dashed;
+}
+
+/* 月视图里的周末格：与周中截然区别（米色） */
+.jot-mcell.is-weekend {
+  background: var(--weekend-bg);
+}
+
+/* 周末格被选中：底色继续保留 weekend 系色，不让 hover/selected 把它洗成与其他列一样 */
+.jot-mcell.is-weekend.is-selected {
+  background: var(--weekend-bg-selected);
+}
+
+/* ===================== month view ===================== */
+.jot-cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-bottom: 4px;
+  /* 防止浏览器把整个网格压缩到比 7 列文本还窄 —— 这样能避免最右侧的「六/日」
+     被 flex/grid 计算压到不可见。min-width:0 是 grid 子项的标配。 */
+  min-width: 0;
+}
+
+.jot-cal-weekdays span {
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-3);
+  padding: 4px 0;
+}
+
+/* 月历 + 右侧当日详情：桌面端左右分栏 */
+.jot-month-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  /* 限制总高度，让月历内部可以滚动，不会一直向下扩张 */
+  flex: 1;
+  min-height: 0;
+  max-height: calc(100vh - 260px);
+}
+
+.jot-month {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  /* 关键：让每行等高（grid-auto-rows: 1fr），撑大后由 mcell-items 内部滚动 */
+  grid-auto-rows: 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  /* 翻月入场动画：从右(下一月)/左(上一月)滑入淡入 */
+  animation: jot-month-in 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  height: 100%;
+}
+
+/* 月历列容器：把「星期表头」和「日期网格」绑在一起占满左半边，
+   右半边留给日程详情面板。这样星期表头的 7 列宽度永远跟日历 7 列对齐，
+   不会再被右侧详情面板压掉 六/日。 */
+.jot-month-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* 父布局 align-items:flex-start 会让所有子项贴顶 —— 显式 stretch 让列容器
+     撑满 max-height，下面的 .jot-month 才能有可分配的剩余高度 */
+  align-self: stretch;
+}
+
+.jot-month-col .jot-cal-weekdays {
+  flex-shrink: 0;
+}
+
+.jot-month-col .jot-month {
+  /* 列容器里改用 flex 占满剩余高度，避免 height:100% 在 flex 子项里失效 */
+  height: auto;
+}
+
+@keyframes jot-month-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--jot-enter-x, 36px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 日期/年月/周 选择弹层内部翻页（翻月、翻年）的入场动画 */
+@keyframes jot-pop-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--jot-enter-x, 24px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 选中某天后的右侧详情面板 */
+.jot-day-detail {
+  width: 320px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+}
+
+.jot-day-detail .jot-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.jot-mcell {
+  background: var(--bg);
+  min-height: 0;
+  padding: 5px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  transition: background 0.12s;
+  position: relative;
+}
+
+.jot-mcell:hover {
+  background: var(--bg-soft);
+}
+
+.jot-mcell.is-outside {
+  background: #fcfbf9;
+  color: var(--ink-3);
+}
+
+.jot-mcell.is-outside .jot-mcell-num {
+  color: var(--line-strong);
+}
+
+.jot-mcell.is-dragover {
+  background: var(--accent-soft);
+}
+
+.jot-mcell.is-selected {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.jot-mcell-num {
+  font-size: 12px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  padding: 2px 0 1px;
+}
+
+/* 月历里「顶栏选中这一天」小标记：靠右上角，跟主题色走 */
+.jot-mcell-pin {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  font-size: 8px;
+  line-height: 1;
+  color: var(--accent);
+  animation: jot-pin-pulse 1.6s ease-in-out infinite;
+}
+
+.jot-mcell.is-outside .jot-mcell-pin {
+  color: var(--ink-3);
+}
+
+.jot-mcell.is-today .jot-mcell-num {
+  align-self: flex-start;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 9px;
+  padding: 1px 6px;
+  font-weight: 500;
+  min-width: 19px;
+  text-align: center;
+}
+
+.jot-mcell-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  flex: 1;
+  /* 月历内部滚动：日程多时可滚动查看，而不让 mcell 自己撑高整个 grid */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  padding-right: 2px;
+}
+
+.jot-mcell-items::-webkit-scrollbar {
+  width: 5px;
+}
+.jot-mcell-items::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 3px;
+}
+
+.jot-mini {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 1.2;
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+  cursor: grab;
+  overflow: hidden;
+}
+
+.jot-mini:hover {
+  background: var(--line);
+}
+
+.jot-mini-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  flex-shrink: 0;
+  /* flex 居中按几何中心对齐，英文小写字母 x-height 视觉中心偏下，
+     这里 +0.5px 把 dot 稍微下移，让两种语言都看起来齐 */
+  transform: translateY(0.5px);
+}
+
+.jot-mini.k-task .jot-mini-dot {
+  background: var(--ink-3);
+  border-radius: 1px;
+}
+
+.jot-mini.k-task.is-done .jot-mini-dot {
+  background: var(--accent);
+}
+
+.jot-mini.k-event {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+/* 月视图：事件给一个柔和的琥珀淡背景（10% alpha）跟日期格区分开，
+   既保留"小色块"的视觉分块感，又不会和周末格 tint 互相叠加显得割裂 */
+.jot-month .jot-mini.k-event {
+  background: rgba(245, 158, 11, 0.10);
+  color: var(--ink-2);
+}
+.jot-month .jot-mini.k-event:hover {
+  background: rgba(245, 158, 11, 0.20);
+}
+
+.jot-mini.k-event .jot-mini-dot {
+  background: var(--amber);
+}
+
+.jot-mini.is-tentative {
+  border: 1px dashed var(--amber);
+  background: transparent;
+}
+
+.jot-mini.is-done .jot-mini-t {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* 标签色：左边 4px 圆点跟着标签颜色走。
+   颜色统一从 --mk 取（组件把标签色内联成 --mk），这样内置标签和
+   用户自建标签走同一条通道，不用再为每个标签加一条 CSS 规则。 */
+.jot-mini[data-cat] .jot-mini-dot { background: var(--mk); }
+
+.jot-mini-t {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.jot-mcell-more {
+  font-size: 10px;
+  color: var(--ink-3);
+  padding-left: 4px;
+}
+
+/* ===================== week view ===================== */
+.jot-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+  /* 占满垂直空间，列会拉伸填满 */
+  flex: 1;
+  min-height: 0;
+  /* 给 grid 一个最大高度，避免某列任务过多时拉高整行（连带拉高其他空列） */
+  max-height: calc(100vh - 260px);
+  min-height: 360px;
+}
+
+.jot-wcol {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 10px 9px 8px;
+  min-height: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  transition: border-color 0.14s, background 0.14s;
+}
+
+.jot-wcol:hover {
+  border-color: var(--line-strong);
+}
+
+/* 今天列：和周中其他天数完全一致（中性灰边框 + 白底），不再做任何高亮提示
+   —— 蓝色只属于「用户选中」，否则今天列（恰好是周一时）会被误认成选中 */
+.jot-wcol.is-today {
+  border-color: var(--line);
+  background: var(--bg);
+}
+
+/* 周末列（周六 / 周日）：极浅米色与周中区分（跟主题色走，不写死） */
+.jot-wcol.is-weekend {
+  background: var(--weekend-bg);
+}
+
+.jot-wcol.is-weekend.is-today {
+  background: var(--weekend-bg);
+}
+
+.jot-wcol.is-weekend:hover {
+  background: var(--weekend-bg-hover);
+}
+
+/* 周末列被选中：底色保留 weekend 系的「温暖米色」基调，不让 accent-soft 把周末色
+   「洗掉」成统一底；选中感靠更深的边框（border + box-shadow + 头部边框颜色 + 强调色文字）传达 */
+.jot-wcol.is-weekend.is-selected {
+  background: var(--weekend-bg-selected);
+}
+
+.jot-wcol.is-dragover {
+  background: var(--accent-soft);
+}
+
+.jot-wcol-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0 2px 7px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.jot-wcol-head:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* 选中态：底色跟主题走；强调色用主题主色（accent），） */
+.jot-wcol.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  background: var(--accent-soft);
+}
+
+.jot-wcol.is-selected .jot-wcol-head {
+  border-bottom-color: var(--accent);
+}
+
+.jot-wcol.is-selected .jot-wcol-wd,
+.jot-wcol.is-selected .jot-wcol-dnum {
+  color: var(--accent);
+}
+
+/* 选中后下方详情面板 */
+.jot-week-detail {
+  margin-top: 16px;
+}
+
+.jot-week-detail .jot-group-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+/* 周一/周二与日期数字：颜色和字号同步 */
+.jot-wcol-wd {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.jot-wcol-dnum {
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+/* 「顶栏选中这一天」小标记：跟主题色走，浅淡但不会跟 is-today 的边框混淆 */
+.jot-wcol-pin {
+  margin-left: auto;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--accent);
+  align-self: center;
+  animation: jot-pin-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes jot-pin-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* 今天：不再把日期数字染蓝（与顶栏「纯文字、无蓝」保持一致）。
+   仅用 .jot-wcol.is-today 的极浅底色做柔和提示，避免被误认成「选中」 */
+.jot-wcol.is-today .jot-wcol-dnum {
+  color: var(--ink);
+}
+
+.jot-wcol-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  /* 关键：flex 子项允许收缩 + 内部滚动，否则会撑高整列 */
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  padding-right: 2px;
+}
+
+.jot-wcol-items::-webkit-scrollbar {
+  width: 5px;
+}
+.jot-wcol-items::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 3px;
+}
+
+.jot-wcol-add {
+  align-self: flex-start;
+  width: 100%;
+  padding: 4px 0;
+  border-radius: var(--r-sm);
+  color: var(--ink-3);
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.12s, background 0.12s;
+}
+
+.jot-wcol:hover .jot-wcol-add {
+  opacity: 1;
+}
+
+.jot-wcol-add:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+.jot-wcol-input {
+  width: 100%;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-sm);
+  padding: 5px 7px;
+  font-size: 13px;
+  outline: none;
+  background: var(--bg);
+}
+
+.jot-witem {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  background: var(--bg-sunken);
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: grab;
+  transition: background 0.12s;
+}
+
+.jot-witem-time {
+  color: var(--amber);
+  font-weight: 500;
+  margin-right: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.jot-witem:hover {
+  background: var(--line);
+}
+
+.jot-witem.is-active {
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+/* 多选：周历条目选中态 + 框选命中态（视觉与 TodayView 的 .jot-row-manage 对齐） */
+.jot-witem.is-selected {
+  box-shadow: 0 0 0 1.5px var(--accent), 0 1px 2px rgba(0, 0, 0, 0.06);
+  background: var(--accent-soft);
+}
+.jot-witem.is-marquee-hit {
+  box-shadow: 0 0 0 1.5px var(--accent);
+  background: var(--accent-soft);
+}
+
+/* 自写指针拖拽：源条目在拖拽中半透明，提示正在移动 */
+.jot-witem.is-dragging {
+  opacity: 0.45;
+  cursor: grabbing;
+}
+
+/* 跟随光标的拖拽浮层（不拦截鼠标事件，pointer-events:none） */
+.jot-drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  padding: 4px 10px;
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  white-space: nowrap;
+}
+
+.jot-witem-mark {
+  width: 3px;
+  align-self: stretch;
+  min-height: 14px;
+  border-radius: 2px;
+  background: var(--line-strong);
+  flex-shrink: 0;
+}
+
+.jot-witem.k-task .jot-witem-mark {
+  background: var(--accent);
+}
+
+.jot-witem.k-event .jot-witem-mark {
+  background: var(--amber);
+}
+
+/* 标签色：周历条目前的 marker 跟着标签颜色走（同月历 mini，统一取 --mk）。 */
+.jot-witem[data-cat] .jot-witem-mark { background: var(--mk); }
+
+.jot-witem.is-tentative {
+  background: transparent;
+  border: 1px dashed var(--amber);
+}
+
+.jot-witem.is-done .jot-witem-t {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.jot-witem-t {
+  min-width: 0;
+  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===================== today: 任务 / 日程 双栏 ===================== */
+.jot-today {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* 隐藏日程列后，让任务列独占整行 */
+.jot-today.is-schedule-hidden {
+  grid-template-columns: 1fr;
+}
+
+.jot-col {
+  min-width: 0;
+}
+
+.jot-col-div {
+  display: none;
+}
+
+.jot-col-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+}
+
+.jot-col-head-row .jot-col-title {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.jot-col-hide {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  color: var(--ink-3);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jot-col-hide:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+.jot-col-restore {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 20px;
+  background: none;
+  color: var(--ink-3);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.jot-col-restore:hover {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+
+.jot-col-restore-plus {
+  font-size: 13px;
+  color: var(--amber);
+}
+
+.jot-col-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+}
+
+.jot-col-title.t-blue { color: var(--accent); }
+.jot-col-title.t-amber { color: var(--amber); }
+
+/* 列头部右侧操作：chevron（折叠/展开）/ ×（隐藏整列） */
+.jot-col-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.jot-col-chev {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  color: var(--ink-3);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+
+.jot-col-chev:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+.jot-col-chev.is-collapsed {
+  transform: rotate(-90deg);
+}
+
+/* 列底部就地添加 */
+.jot-col-add {
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px 12px;
+  border: 1px dashed var(--line);
+  border-radius: var(--r-lg);
+  background: none;
+  color: var(--ink-3);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+
+.jot-col-add:hover {
+  border-color: var(--line-strong);
+  color: var(--ink-2);
+  background: var(--bg-soft);
+}
+
+.jot-col-add.k-task:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.jot-col-add.k-event:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.jot-col-add-plus {
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.jot-col-input {
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  outline: none;
+}
+
+.jot-col-add {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 9px 11px;
+  border-radius: var(--r-md);
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-3);
+  font-size: 13px;
+  transition: all 0.12s;
+}
+
+.jot-col-add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.jot-col-add-plus {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.jot-col-input {
+  width: 100%;
+  margin-top: 12px;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-md);
+  padding: 9px 11px;
+  font-size: 16px;
+  outline: none;
+  background: var(--bg);
+}
+
+/* ===================== 右键 / 长按菜单 ===================== */
+.jot-ctxmenu {
+  position: fixed;
+  /* 提高到 1000，避免被任何带 z-index 的层（比如 topbar / 侧栏 / popover）覆盖 */
+  z-index: 1000;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  padding: 5px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+  /* 内容超过视口时滚动，避免看到下面的按钮被截掉 */
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  overscroll-behavior: contain;
+}
+
+.jot-ctxmenu::-webkit-scrollbar {
+  width: 6px;
+}
+.jot-ctxmenu::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 3px;
+}
+
+.jot-ctx-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.jot-ctx-item:hover {
+  background: var(--bg-sunken);
+}
+
+.jot-ctx-item.is-on {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.jot-ctx-item.is-danger {
+  color: var(--red);
+}
+
+.jot-ctx-item.is-danger:hover {
+  background: var(--red-soft);
+}
+
+.jot-ctx-label {
+  font-size: 11px;
+  color: var(--ink-3);
+  padding: 9px 10px 4px;
+}
+
+.jot-ctx-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0 6px 4px;
+}
+
+.jot-ctx-chip {
+  padding: 3px 9px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.jot-ctx-chip:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-sunken);
+}
+
+.jot-ctx-chip.is-on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 500;
+}
+
+/* 标签区：分类 chip（带色点），与「颜色」区分开，点选即给条目打分类标签 */
+.jot-ctx-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 2px;
+}
+.jot-ctx-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--ink-2);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.jot-ctx-tag:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-sunken);
+}
+.jot-ctx-tag.is-on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 500;
+}
+.jot-ctx-tag-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.jot-ctx-tag-dot.is-none {
+  background: transparent;
+  border: 1.5px solid var(--ink-3);
+}
+/* 标签色点：色值由组件内联（用户自建标签的任意色都能生效），
+   所以这里不再为每个内置标签写死一条规则。 */
+
+/* 右键菜单里的 date input：和 chip 同一行风格 */
+.jot-ctx-date {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--ink-2);
+  background: var(--bg);
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+.jot-ctx-date:focus {
+  border-color: var(--accent);
+}
+
+.jot-ctx-sep {
+  height: 1px;
+  background: var(--line);
+  margin: 5px 0;
+}
+
+/* ===================== 麦克风 ===================== */
+.jot-mic {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-sm);
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jot-mic:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+.jot-mic.is-on {
+  background: var(--red);
+  color: #fff;
+  animation: jot-pulse 1.2s ease-in-out infinite;
+}
+
+.jot-qa-row.is-listening {
+  background: var(--red-soft);
+}
+
+.jot-qa-err {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--red);
+}
+
+/* 实时归类预览 chip（方案 ①） */
+.jot-qa-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.jot-qa-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+  border: 1px solid var(--line);
+}
+.jot-qa-chip.k-task {
+  color: var(--green, #15803d);
+  background: color-mix(in srgb, var(--green, #15803d) 12%, white);
+  border-color: color-mix(in srgb, var(--green, #15803d) 35%, white);
+}
+.jot-qa-chip.k-event {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 35%, white);
+}
+.jot-qa-chip-sub {
+  color: var(--ink-2);
+}
+.jot-qa-chip-hint {
+  color: var(--ink-3, #9aa0a6);
+}
+
+/* 自动归类草稿面板（方案 ②） */
+.jot-draft-panel {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+.jot-draft-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+}
+.jot-draft-title {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.jot-draft-x {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-2);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.jot-draft-x:hover {
+  background: var(--bg-soft);
+}
+.jot-draft-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.jot-draft-row {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--r-md);
+  padding: 8px 10px;
+  background: var(--bg);
+}
+.jot-draft-row.k-task {
+  border-left-color: var(--green, #15803d);
+}
+.jot-draft-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.jot-draft-del {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ink-2);
+  cursor: pointer;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.jot-draft-del:hover {
+  background: var(--red-soft);
+  color: var(--red);
+}
+.jot-draft-text {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 6px 9px;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--bg);
+}
+.jot-draft-text:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+.jot-draft-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 6px;
+}
+.jot-draft-date,
+.jot-draft-time {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 4px 7px;
+  font-size: 12.5px;
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--bg);
+}
+/* 多日截止日：默认空 + 占位符「+ 多日」提示，可点击展开 date picker；
+   选中后换 amber 边框 + 软底，跟起始日做出区分 */
+.jot-draft-until {
+  border: 1px dashed var(--line);
+  border-radius: var(--r-sm);
+  padding: 4px 7px;
+  font-size: 12.5px;
+  font-family: var(--font);
+  color: var(--ink-3);
+  background: var(--bg-soft);
+  min-width: 110px;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.jot-draft-until::placeholder {
+  color: var(--amber);
+  opacity: 0.7;
+}
+.jot-draft-until:hover {
+  border-color: var(--amber);
+  color: var(--ink-2);
+}
+.jot-draft-until.is-on {
+  border-style: solid;
+  border-color: var(--amber);
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-weight: 500;
+}
+.jot-draft-ten {
+  font-size: 11px;
+  color: var(--amber, #b45309);
+  border: 1px dashed color-mix(in srgb, var(--amber, #b45309) 50%, white);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.jot-draft-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--bg-soft);
+}
+
+.jot-draft-foot .jot-text-btn {
+  /* 草稿面板里的「取消」：明确的按钮样式，留出足够空白不与「添加」挤一起 */
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  transition: border-color 0.12s, background 0.12s;
+}
+.jot-draft-foot .jot-text-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.jot-draft-add {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 10px;
+}
+.jot-draft-add:hover {
+  background: color-mix(in srgb, var(--accent) 88%, black);
+}
+.jot-draft-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 输入行右侧：日期选择 + 麦克风 + 回车 */
+.jot-qa-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+/* 顶栏右侧大日期：纯文字，纯黑、加粗加大，日期和周几之间留出明显空隙
+   hover 时给一个清晰的蓝框 + 极浅底（一眼能看出可点） */
+.jot-top-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: var(--r-md);
+  padding: 0 16px;
+  height: 44px;
+  font-family: var(--font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  color: #1a1a1a;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+  /* ‹/› 切换天数时滑入淡入：按钮按 activeDateKey 作 key 强制 remount 重放 */
+  animation: jot-day-in 240ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes jot-day-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--jot-day-enter-x, 20px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.jot-top-date:hover {
+  /* 用户反馈"蓝色边框怪"：换成米黄/橙黄细边，与主题一致 */
+  border-color: var(--amber);
+  /* 不要底色，保持纯文字感 */
+  background: transparent;
+}
+
+/* 今天：日期与周几都保持纯黑（不要发蓝），hover 框照常 */
+.jot-top-date.is-today .jot-top-wd {
+  color: #1a1a1a;
+}
+
+
+/* 周几：和日期同字号同色系（用户要求与日期等大） */
+.jot-top-wd {
+  font-size: 36px;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 隐藏的原生 date input —— 用 clip-path 让元素"在流里"但视觉上不可见：
+   showPicker() 需要元素实际可访问，不能 pointer-events:none，不能 display:none；
+   关键测试要点：visibility:hidden 也会让 showPicker 在某些 Chromium 版本失败。 */
+.jot-top-date-picker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* 正文里的文件引用（📎 文件名）—— 可点击打开/下载 */
+.jot-prose a.jot-file,
+.jot-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--accent);
+  text-decoration: none;
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 1px 7px;
+  margin: 0 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.92em;
+}
+.jot-prose a.jot-file:hover,
+.jot-file:hover {
+  border-color: var(--accent);
+}
+
+/* ===== 居中弹层：选日期 ===== */
+.jot-date-pop-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 18, 16, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: jot-fade-in 0.14s ease-out;
+}
+
+.jot-date-pop {
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 64px rgba(20, 18, 16, 0.28),
+    0 2px 6px rgba(20, 18, 16, 0.08);
+  padding: 20px 24px;
+  width: min(360px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: jot-search-pop 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.jot-date-pop-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.jot-date-pop-preview {
+  font-family: var(--font);
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  letter-spacing: 0;
+}
+
+.jot-date-pop-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg-soft);
+  font-family: var(--font);
+  font-size: 16px;
+  color: var(--ink);
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.jot-date-pop-input:focus {
+  border-color: var(--accent);
+}
+
+.jot-date-pop-row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ===================== 搜索 ===================== */
+/* 搜索按钮：与下方 nav 同一基线，外加边框与 nav 区分开 */
+.jot-nav-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  /* 关键：padding 与 .jot-nav-item 完全一致，让 icon 落在同一行 */
+  padding: 8px 10px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-3);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.jot-nav-search:hover {
+  border-color: var(--line-strong);
+  color: var(--ink-2);
+}
+
+.jot-nav-search span {
+  flex: 1;
+  text-align: left;
+}
+
+.jot-top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jot-search-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 18, 16, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 14vh 16px 16px;
+  animation: jot-fade-in 0.14s ease-out;
+}
+
+.jot-search {
+  width: min(620px, 100%);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 64px rgba(20, 18, 16, 0.28),
+    0 2px 6px rgba(20, 18, 16, 0.08);
+  overflow: hidden;
+  animation: jot-search-pop 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes jot-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes jot-search-pop {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.jot-search-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.jot-search-icon {
+  display: flex;
+  color: var(--ink-3);
+}
+
+.jot-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.jot-search-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: var(--ink-3);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jot-search-close:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+.jot-search-list {
+  overflow-y: auto;
+  padding: 6px;
+  flex: 1;
+}
+
+.jot-search-hint {
+  margin: 18px 10px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.jot-search-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.jot-search-item.is-active {
+  background: var(--bg-sunken);
+}
+
+.jot-search-kind {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: var(--bg-sunken);
+  color: var(--ink-3);
+}
+
+.jot-search-kind.k-task {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.jot-search-kind.k-event {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.jot-search-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jot-search-date {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+/* ===================== 星标 ===================== */
+.jot-star {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  color: var(--line-strong);
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s, background 0.12s;
+}
+
+.jot-card:hover .jot-star {
+  opacity: 1;
+}
+
+.jot-star.is-on {
+  opacity: 1;
+  color: #eab308;
+}
+
+.jot-star:hover {
+  background: var(--bg-sunken);
+  color: #ca8a04;
+}
+
+.jot-card.is-starred {
+  background: #fffdf4;
+}
+
+.jot-card.is-starred:not(.is-editing):hover {
+  background: #fffbeb;
+}
+
+/* ===================== 图片 ===================== */
+.jot-prose img,
+.jot-html img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+  margin: 7px 0;
+  border: 1px solid var(--line);
+}
+
+.jot-html img {
+  max-height: 260px;
+}
+
+.jot-tb-file {
+  display: none;
+}
+
+/* ===================== 细节：勾选动画 / 滚动条 ===================== */
+.jot-check svg {
+  transform: scale(0.4);
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.jot-check.is-done svg {
+  transform: scale(1);
+}
+
+.jot-content::-webkit-scrollbar,
+.jot-draft-list::-webkit-scrollbar,
+.jot-search-list::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.jot-content::-webkit-scrollbar-thumb,
+.jot-draft-list::-webkit-scrollbar-thumb,
+.jot-search-list::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 5px;
+  border: 2px solid var(--bg);
+}
+
+.jot-content::-webkit-scrollbar-thumb:hover,
+.jot-draft-list::-webkit-scrollbar-thumb:hover,
+.jot-search-list::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-3);
+}
+
+@keyframes jot-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: none; }
+}
+
+.jot-witem {
+  animation: jot-in 0.14s ease-out;
+}
+
+/* ===================== 仅浅色主题（用户要求固定浅色系） ===================== */
+
+/* ===================== 轻量提示（自动消失的浮窗） ===================== */
+.jot-toasts {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.jot-toast {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(28, 26, 24, 0.92);
+  color: #fff;
+  font-size: 13px;
+  padding: 9px 14px 9px 18px;
+  border-radius: 22px;
+  box-shadow: 0 8px 24px rgba(20, 18, 16, 0.22);
+  border: none;
+  animation: jot-toast-in 0.2s ease-out;
+}
+
+.jot-toast-text {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.jot-toast:hover {
+  background: rgba(28, 26, 24, 0.98);
+}
+
+.jot-toast-btn {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.jot-toast-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+@keyframes jot-toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ===================== responsive ===================== */
+@media (max-width: 900px) {
+  /* 双栏放不下时改为上下两栏，中间加一条分隔线 */
+  .jot-today {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .jot-col-div {
+    display: block;
+    height: 1px;
+    background: var(--line);
+    margin: 24px 0;
+  }
+
+  .jot-week {
+    grid-template-columns: repeat(7, minmax(150px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  /* 月历详情在窄屏改为下方堆叠 */
+  .jot-month-layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .jot-day-detail {
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .jot-app {
+    flex-direction: column;
+  }
+
+  .jot-top {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  /* 手机端：输入框独占一行满宽，日期 ‹日期› 切到第二行、日期按钮 flex:1 不撑爆，
+     左右箭头分列两端都可见（修复输入框被挤成 0 宽、右箭头溢出屏幕） */
+  .jot-top-input {
+    width: 100%;
+  }
+  .jot-top-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .jot-top-date {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+    font-size: 22px;
+    gap: 8px;
+    padding: 0 10px;
+  }
+  .jot-top-wd {
+    font-size: 18px;
+  }
+  .jot-top-date-nav {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .jot-top-brand {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .jot-side {
+    order: 2;
+    width: 100%;
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .jot-brand,
+  .jot-side-foot {
+    display: none;
+  }
+
+  .jot-nav {
+    flex-direction: row;
+    width: 100%;
+    gap: 0;
+  }
+
+  .jot-nav-item {
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    padding: 5px 2px;
+    font-size: 11px;
+    border-radius: var(--r-md);
+  }
+
+  .jot-nav-item.is-active {
+    background: transparent;
+    box-shadow: none;
+    color: var(--accent);
+  }
+
+  .jot-nav-label {
+    text-align: center;
+  }
+
+  .jot-nav-badge {
+    position: absolute;
+    top: 0;
+    right: 50%;
+    transform: translateX(14px);
+    min-width: 15px;
+    height: 15px;
+    font-size: 10px;
+  }
+
+  .jot-nav-item {
+    position: relative;
+  }
+
+  .jot-quickadd-wrap {
+    padding: 12px 16px 10px;
+  }
+
+  .jot-content {
+    padding: 4px 16px 32px;
+  }
+
+  .jot-card {
+    padding: 10px 10px;
+  }
+
+  .jot-card-meta {
+    padding-top: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* 月视图在窄屏退化为「日期 + 圆点」，点击再看详情 */
+  .jot-mcell {
+    min-height: 56px;
+    padding: 3px 3px 4px;
+  }
+
+  .jot-mcell-items {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 0 1px;
+  }
+
+  .jot-mini {
+    padding: 0;
+    background: none;
+    width: 6px;
+    height: 6px;
+  }
+
+  .jot-mini:hover {
+    background: none;
+  }
+
+  .jot-mini-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .jot-mini-t,
+  .jot-mcell-more {
+    display: none;
+  }
+
+  .jot-cal-title {
+    min-width: 108px;
+    font-size: 14px;
+  }
+
+  /* 触摸设备没有 hover，添加按钮常显 */
+  .jot-wcol-add {
+    opacity: 1;
+  }
+
+  .jot-draft-date,
+  .jot-drafts-hint {
+    display: none;
+  }
+
+  .jot-drafts-foot {
+    justify-content: flex-end;
+  }
+
+  /* 侧栏变成底部 tab，搜索入口移到顶部栏 */
+  .jot-nav-search {
+    display: none;
+  }
+
+  /* 触摸设备没有 hover，星标常显 */
+  .jot-star {
+    opacity: 1;
+  }
+
+  .jot-search-mask {
+    padding: 8vh 10px 12px;
+  }
+
+  /* 周视图在手机端改为纵向 agenda：每天一个卡片，避免 7 列横向挤压 + 横向滚动。
+     【关键修复】原来 .jot-week 在手机端用 flex:1 + min-height:0，会把整个 week 容器
+     压成 8px 高，flex 子项 .jot-wcol 在 min-height:0 + 默认 flex-shrink:1 下被压成
+     20px，head(43px) 和 items 内容溢出后 7 列相互叠加 = "文字全部叠在一起"。
+     正确做法：week 跟内容走高度（flex: 0 0 auto），wcol 禁止被压缩（flex-shrink: 0），
+     整页滚动交给外层 .jot-content */
+  .jot-week {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: 10px;
+    overflow: visible;
+    max-height: none;
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+  .jot-wcol {
+    min-width: 0;
+    border-radius: var(--r-lg);
+    flex-shrink: 0;
+  }
+  .jot-wcol-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 14px;
+    cursor: pointer;
+  }
+  .jot-wcol-head:hover {
+    border-bottom-color: var(--line);
+  }
+  .jot-wcol-wd,
+  .jot-wcol-dnum {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .jot-wcol-items {
+    overflow-y: visible;
+    max-height: none;
+    padding: 4px 12px 10px;
+    gap: 6px;
+  }
+  .jot-witem {
+    font-size: 14px;
+    padding: 8px 10px;
+    align-items: center;
+  }
+  /* 周视图顶部 ‹第X周› 与「回到本周」在小屏换行不挤 */
+  .jot-cal-head {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .jot-cal-title {
+    min-width: 0;
+  }
+
+  /* 月视图在手机端：日历占满整宽（之前被桌面「日历 + 右侧详情分栏」挤成半宽小角） */
+  .jot-month-layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    max-height: none;
+  }
+  .jot-month {
+    width: 100%;
+    height: auto;
+    grid-auto-rows: minmax(56px, auto);
+  }
+  .jot-day-detail {
+    width: 100%;
+    position: static;
+    align-self: stretch;
+  }
+}
+
+/* ===================== 登录门（云同步账号白名单） ===================== */
+.jot-auth-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: var(--bg);
+  overflow-y: auto;
+}
+
+.jot-auth-card {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.jot-auth-brand {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.jot-auth-sub {
+  margin: 0 0 22px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.jot-auth-label {
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-bottom: 5px;
+}
+
+.jot-auth-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 9px 11px;
+  /* 16px 起步：iOS Safari 聚焦 <16px 的输入框会自动放大整页 */
+  font-size: 16px;
+  outline: none;
+  background: var(--bg);
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.jot-auth-input:focus {
+  border-color: var(--accent);
+}
+
+.jot-auth-err {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--red);
+  background: var(--red-soft);
+  border-radius: var(--r-sm);
+  padding: 8px 10px;
+}
+
+.jot-auth-submit {
+  width: 100%;
+  padding: 10px 0;
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.12s;
+}
+
+.jot-auth-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.jot-auth-submit:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.jot-auth-switch {
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.jot-auth-switch:hover {
+  color: var(--accent);
+}
+
+/* ===================== 自定义日期 popover（顶栏用 + 右键多日重复用） =====================
+   z-index 必须 > ContextMenu (1000)，否则右键选「设为多日重复…」时弹出的日历会被
+   右键菜单本身盖住（用户反馈「日历被右键出来的交互栏覆盖」就是这个根因）。
+   1100：盖过 ContextMenu，但仍让顶栏 < SelectionBar (9500) < marquee (9990) 的层级。 */
+.jot-datepop {
+  position: fixed;
+  z-index: 1100;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+  padding: 14px;
+  width: 320px;
+  font-family: var(--font);
+  color: var(--ink);
+  user-select: none;
+}
+.jot-datepop-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.jot-datepop-title {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.jot-datepop-x {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink-2);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.jot-datepop-x:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+.jot-datepop-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+  text-align: center;
+}
+.jot-datepop-weekdays .is-weekend {
+  color: var(--accent);
+}
+.jot-datepop-grid,
+.jot-datepop-months {
+  animation: jot-pop-in 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.jot-datepop-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.jot-datepop-day {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0;
+  height: 36px;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  font-family: inherit;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+.jot-datepop-day:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.jot-datepop-day.is-outside {
+  color: var(--ink-3);
+  opacity: 0.45;
+}
+.jot-datepop-day.is-weekend {
+  color: var(--accent);
+}
+.jot-datepop-day.is-today {
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.jot-datepop-day.is-selected {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  border-color: var(--accent);
+}
+.jot-datepop-day.is-selected:hover {
+  background: var(--amber);
+  color: #fff;
+}
+/* 周选择弹层：保持正常日历扁平样式，鼠标悬停在某一天时，它所在整周高亮——
+   悬停优先于当前选中周，鼠标移开后恢复显示选中周 */
+.jot-datepop-day.is-week-hi {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  border-color: var(--accent-soft);
+}
+.jot-datepop-day.is-week-hi.is-today {
+  border-color: var(--accent);
+}
+.jot-datepop-day.is-week-hi:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* ===================== 周选择 popover ===================== */
+.jot-wpop {
+  min-width: 360px;
+  max-width: 420px;
+}
+.jot-wpop-list {
+  max-height: 420px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px;
+}
+.jot-wpop-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-soft);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  text-align: left;
+}
+.jot-wpop-row:hover {
+  background: #fdf6e3;
+  border-color: var(--amber);
+}
+.jot-wpop-row.is-current {
+  border-color: var(--amber);
+}
+.jot-wpop-row.is-selected {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #fff;
+}
+.jot-wpop-row.is-outside {
+  opacity: 0.55;
+}
+.jot-wpop-n {
+  font-weight: 600;
+  font-size: 13px;
+  min-width: 64px;
+}
+.jot-wpop-dates {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  flex: 1;
+}
+.jot-wpop-row.is-selected .jot-wpop-dates {
+  color: #fff;
+}
+.jot-wpop-tag {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--amber);
+  font-weight: 600;
+}
+.jot-wpop-row.is-selected .jot-wpop-tag {
+  background: #fff;
+  color: var(--amber);
+}
+
+/* ===================== 收起按钮（ExpandedCard 右上角）=====================
+   旧版用 ⌄ 字形放在 .jot-icon-btn（24×24，色淡），用户反馈"不显眼、没居中"。
+   改成圆角方块 28×28、明确字形 ∨ + hover 时换底色，与旁边的 × 删除按钮区分。 */
+.jot-collapse-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg-soft);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.jot-collapse-btn:hover {
+  background: #fdf6e3;
+  border-color: var(--amber);
+  color: var(--amber);
+}
+.jot-collapse-btn svg {
+  display: block;
+}
+
+/* ===================== 草稿面板（DraftPanel）—— 改为浮层 =====================
+   不再让 .jot-draft-panel 在 QuickAdd 容器里占位"撑大页面"，
+   改成 position: fixed 的浮层（带 backdrop mask + 阴影），点遮罩关闭。 */
+.jot-draft-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  background: rgba(20, 18, 16, 0.18);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 96px; /* 露出顶栏日期 */
+}
+.jot-draft-panel.is-floating {
+  position: relative;
+  width: min(820px, calc(100vw - 64px));
+  max-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.jot-draft-panel.is-floating .jot-draft-list {
+  flex: 1;
+  max-height: none;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.jot-draft-panel.is-floating .jot-draft-foot {
+  border-top: 1px solid var(--line);
+  background: var(--bg-soft);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+}
+/* 「全部添加」主按钮：原来用 .jot-qa-go 蓝底，跟输入框提交按钮撞色且
+   视觉上跟"取消"挤在一起。改成更明确的强调色 + 留出间隔。 */
+.jot-draft-add {
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: var(--amber);
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, transform 0.05s;
+}
+.jot-draft-add:hover:not(:disabled) {
+  background: #b8730b;
+}
+.jot-draft-add:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.jot-draft-add:disabled {
+  background: var(--line);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+.jot-draft-foot .jot-text-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.jot-draft-foot .jot-text-btn:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+/* ===================== 管理模式（批量删 + 拖动排序）===================== */
+
+/* 顶栏右侧加个"管理模式"小角标 */
+.jot-manage-badge {
+  position: fixed;
+  bottom: 16px;
+  right: 18px;
+  z-index: 50;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--amber);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.jot-manage-badge button {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 1px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.jot-manage-badge button:hover {
+  background: rgba(255, 255, 255, 0.36);
+}
+
+/* 「管理/完成」按钮（在 col-head-actions 里） */
+.jot-col-manage {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--ink-3);
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+.jot-col-manage:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: #fdf6e3;
+}
+.jot-col-manage.is-on {
+  background: var(--amber);
+  color: #fff;
+  border-color: var(--amber);
+  font-weight: 600;
+}
+
+/* 管理模式下的卡片：左红圈 + 右三杠 + 整行可拖 */
+.jot-card.is-manage {
+  padding-left: 6px;
+  padding-right: 6px;
+  cursor: grab;
+}
+.jot-card.is-manage:active {
+  cursor: grabbing;
+}
+.jot-card.is-manage.is-dragging {
+  opacity: 0.5;
+  transform: scale(0.99);
+}
+.jot-card.is-manage.is-drop-before {
+  box-shadow: inset 0 4px 0 0 var(--accent);
+}
+ .jot-card.is-manage.is-drop-after {
+  box-shadow: inset 0 -4px 0 0 var(--accent);
+}
+
+/* 拖拽指示条：包裹整行的琥珀色横线 + 两侧小三角，明显但不刺眼 */
+.jot-row-manage.is-drop-before {
+  position: relative;
+}
+.jot-row-manage.is-drop-before::before,
+.jot-row-manage.is-drop-after::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6),
+              0 0 12px var(--accent-soft);
+  pointer-events: none;
+  animation: jot-drop-pulse 0.9s ease-in-out infinite alternate;
+}
+.jot-row-manage.is-drop-before::before { top: -2px; }
+.jot-row-manage.is-drop-after::after { bottom: -2px; }
+@keyframes jot-drop-pulse {
+  from { opacity: 0.7; transform: scaleX(0.96); }
+  to   { opacity: 1;   transform: scaleX(1); }
+}
+.jot-card.is-manage .jot-card-body {
+  cursor: grab;
+}
+
+.jot-card-del {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  margin: 0 6px 0 2px;
+  transition: background 0.12s, transform 0.05s;
+}
+.jot-card-del:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+.jot-card-del:active {
+  transform: scale(0.95);
+}
+.jot-card-handle {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: grab;
+  padding: 0;
+  margin: 0 2px 0 6px;
+  color: var(--ink-3);
+}
+.jot-card-handle:active {
+  cursor: grabbing;
+}
+.jot-card-handle span {
+  width: 14px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  display: block;
+}
+.jot-card-handle:hover {
+  color: var(--amber);
+}
+
+/* 管理模式下隐藏星标（避免与拖把手撞视觉重点） */
+.jot-card.is-manage .jot-star {
+  display: none;
+}
+/* 管理模式下卡片 meta 也淡一些 */
+.jot-card.is-manage .jot-card-meta {
+  opacity: 0.6;
+}
+
+/* 拖拽行容器：包一层让 onDragOver/onDrop 有可靠目标。
+   卡片本身的 drop 指示线（amber 上/下边框）在 .jot-card.is-manage 上。 */
+.jot-row-manage {
+  position: relative;
+}
+.jot-row-manage.is-dragging {
+  /* 拖起来的源卡片整体淡出，靠卡片的 .is-dragging 控制 */
+}
+
+/* ===================== 月/周选择器（与顶栏日期 picker 同款外观） ===================== */
+.jot-datepop-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.jot-datepop-month {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 11px 4px;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.jot-datepop-month:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.jot-datepop-month.is-today {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+.jot-datepop-month.is-selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.jot-datepop-month.is-selected:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.jot-datepop-weeks {
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.jot-datepop-week {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg-soft);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  text-align: left;
+}
+.jot-datepop-week:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.jot-datepop-week.is-today {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+.jot-datepop-week.is-selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.jot-datepop-week.is-selected:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.jot-datepop-week-n {
+  font-weight: 600;
+  font-size: 13px;
+  min-width: 58px;
+}
+.jot-datepop-week-d {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  flex: 1;
+}
+.jot-datepop-week.is-selected .jot-datepop-week-d {
+  color: rgba(255, 255, 255, 0.9);
+}
+.jot-datepop-week-tag {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--accent);
+  font-weight: 600;
+}
+.jot-datepop-week.is-selected .jot-datepop-week-tag {
+  background: #fff;
+  color: var(--accent);
+}
+
+/* ===================== 设置面板 ===================== */
+.jot-set-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  background: rgba(20, 18, 16, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* ===================== 数据浏览模态（已完成 / 最近删除） =====================
+   z-index 280：盖在 SettingsPanel (260) 之上，正常情况下不会同时打开，
+   但留 20px buffer 防止 setOpen(false) 与 setHistoryView 之间出现叠层。 */
+.jot-history-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 280;
+  background: rgba(20, 18, 16, 0.18);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+.jot-history {
+  background: var(--bg);
+  width: min(720px, calc(100vw / var(--ui-zoom, 1)));
+  height: 100vh;
+  zoom: var(--ui-zoom, 1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+}
+.jot-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  flex: 0 0 auto;
+}
+.jot-history-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+.jot-history-x {
+  border: none;
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.jot-history-x:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.jot-history-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px 22px 32px;
+}
+
+/* TodayView 任务列表里「未完成 → 已完成」之间的分隔线 */
+.jot-list-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 4px 6px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.jot-list-divider::before,
+.jot-list-divider::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--line);
+}
+.jot-list-divider-txt {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.jot-set {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0px 20px 56px rgba(0, 0, 0, 0.24);
+  /* 跟着字体大小缩放：先除以 zoom 算布局尺寸，再被 zoom 放大渲染，结果就是刚好填满视口 */
+  width: min(620px, calc((100vw - 32px) / var(--ui-zoom, 1)));
+  max-height: min(760px, calc((100vh - 48px) / var(--ui-zoom, 1)));
+  zoom: var(--ui-zoom, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.jot-set-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+}
+.jot-set-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.jot-set-x {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink-2);
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.jot-set-x:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+.jot-set-body {
+  overflow-y: auto;
+  padding: 6px 18px 20px;
+}
+.jot-set-sec {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.jot-set-sec:last-child {
+  border-bottom: none;
+}
+.jot-set-h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.jot-set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 7px 0;
+}
+/* 主题色这一行：标题在上、色块在下方整行横排（不是左右并排）；
+   align-items: flex-start 让 label 按内容自然贴左，不被 stretch 拉到中右；
+   色块靠 .jot-set-themes 自身的 width: 100% + grid 均分布满整行 */
+.jot-set-row.jot-set-row-col {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 12px;
+  margin: 0 !important;
+  padding: 7px 0;
+  text-align: left !important;
+}
+
+/* 列布局下：让 .jot-set-label 按内容自然宽度贴左，
+   否则会被通用规则 .jot-set-label{flex:1 1 auto} 撑到整行宽度，
+   文字看起来像居中。 */
+.jot-set-row.jot-set-row-col > .jot-set-label {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  align-self: flex-start !important;
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.jot-set-label {
+  font-size: 13.5px;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.jot-set-hint {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  line-height: 1.45;
+}
+.jot-set-themes {
+  /* 主题色整行横排在标题下方：8 个一字铺开，间距大一点更透气 */
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+.jot-set-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 3px 7px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-soft);
+  cursor: pointer;
+  font-family: inherit;
+  min-width: 0;
+  transition: border-color 0.12s, background 0.12s, transform 0.08s;
+}
+.jot-set-swatch:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.jot-set-swatch.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.jot-set-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+.jot-set-swatch-name {
+  font-size: 11.5px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100%;
+}
+.jot-set-swatch.is-active .jot-set-swatch-name {
+  color: var(--accent);
+  font-weight: 600;
+}
+.jot-set-seg {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--bg-sunken);
+  border-radius: 9px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.jot-set-segbtn {
+  padding: 5px 13px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+.jot-set-segbtn:hover {
+  color: var(--ink);
+}
+.jot-set-segbtn.is-active {
+  background: var(--bg);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.jot-set-toggle {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  border-radius: 14px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.18s, border-color 0.18s;
+}
+.jot-set-toggle.is-on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.jot-set-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.18s;
+}
+.jot-set-toggle.is-on .jot-set-knob {
+  transform: translateX(18px);
+}
+.jot-set-input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--ink);
+  min-width: 0;
+  flex: 1;
+  max-width: 260px;
+  outline: none;
+  font-family: inherit;
+}
+.jot-set-input:focus {
+  border-color: var(--accent);
+}
+.jot-set-btn {
+  padding: 6px 16px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+.jot-set-btn:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+.jot-set-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.jot-set-testrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.jot-set-testmsg {
+  font-size: 12px;
+  line-height: 1.4;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.jot-set-testmsg.is-ok {
+  color: var(--accent);
+}
+.jot-set-testmsg.is-bad {
+  color: var(--red);
+}
+
+/* ===================== 左下角：设置按钮 + 本地模式 ===================== */
+.jot-set-trigger {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.jot-set-gear {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-2);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.jot-set-gear:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.jot-set-gear-txt {
+  font-weight: 500;
+}
+.jot-local-mode {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-2);
+  font-size: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+.jot-local-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34a853;
+}
+
+/* ===================== 顶栏日期两侧的 ‹ / › ===================== */
+.jot-top-date-nav {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-2);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.jot-top-date-nav:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+/* ===================== 侧栏齿轮按钮 ===================== */
+.jot-side-gear {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.jot-side-gear:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* ===================== 设置面板：API Key 掩码查看 / 编辑 ===================== */
+.jot-set-key-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  max-width: 260px;
+  min-width: 0;
+}
+.jot-set-key-view:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.jot-set-key-dots {
+  letter-spacing: 1px;
+  color: var(--ink-3);
+}
+.jot-set-key-tail {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+.jot-set-key-edit-ico {
+  display: inline-flex;
+  color: var(--ink-3);
+  margin-left: auto;
+}
+.jot-set-key-view:hover .jot-set-key-edit-ico {
+  color: var(--accent);
+}
+.jot-set-key-edit {
+  flex: 1;
+  max-width: 260px;
+  display: flex;
+}
+
+/* ===================== 设置面板：自适应（英文可能更长） ===================== */
+.jot-set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 7px 0;
+  flex-wrap: wrap; /* 英文标签长时换行，避免被挤压 */
+}
+.jot-set-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ===================== 月历右侧日程面板：关闭 × / 收箭头 ===================== */
+.jot-day-detail {
+  position: relative;
+}
+.jot-day-detail-close {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.jot-day-detail-close:hover {
+  background: var(--bg-sunken);
+  color: var(--ink);
+}
+
+/* ===================== 跨多天任务角标 ===================== */
+.jot-draft-recurring {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--amber);
+  background: var(--amber-soft);
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: 6px;
+}
+.jot-draft-recurring svg {
+  display: block;
+}
+
+/* ===================== 多选 / 框选 ===================== */
+
+/* 框选矩形：拖拽时显示在视口，portal 到 body */
+.jot-marquee-box {
+  position: fixed;
+  z-index: 9990;
+  pointer-events: none;
+  border: 1.5px solid var(--accent);
+  background: rgba(37, 99, 235, 0.1);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* 选中态：卡片外圈 + 背景 tint（不动原有色彩） */
+.jot-row-manage.is-selected > .jot-card {
+  box-shadow: 0 0 0 1.5px var(--accent), 0 1px 2px rgba(0, 0, 0, 0.04);
+  background: var(--accent-soft);
+}
+
+/* 框选拖拽过程中命中的行：临时边框（视觉走完即移除） */
+.jot-row-manage.is-marquee-hit > .jot-card {
+  box-shadow: 0 0 0 1.5px var(--accent);
+  background: var(--accent-soft);
+}
+
+/* 底部批量操作条 */
+.jot-selection-bar {
+  position: fixed;
+  z-index: 9500;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  font-size: 13px;
+  /* 放宽到几乎全屏宽：优先保证内容单排放得下、不出滚动条；
+     真超窄屏才溢出（滚动条已完全隐藏，见下） */
+  max-width: min(97vw, 1500px);
+  /* 单排布局：标签 group + 截止日期 + 取消重复 + 删除，全部横向排列；
+     内容超出 max-width 时横向滚动而不是换行（用户反馈：不要两排）。 */
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  user-select: none;
+}
+/* 滚动条彻底隐藏（用户反馈：底部的拖动滑块太丑）——
+   保留 overflow-x:auto 的滚动能力，但不显示滚动条 UI */
+.jot-selection-bar::-webkit-scrollbar {
+  display: none;
+}
+.jot-selection-bar {
+  scrollbar-width: none; /* Firefox */
+}
+.jot-selection-bar .jot-sel-cancel {
+  border: none;
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0; /* 单排布局下不被压缩 */
+}
+.jot-selection-bar .jot-sel-cancel:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+.jot-selection-bar .jot-sel-count {
+  font-weight: 600;
+  color: var(--ink);
+  padding-right: 8px;
+  border-right: 1px solid var(--line);
+  margin-right: 2px;
+  white-space: nowrap; /* 「已选 N」绝不被挤成竖排 */
+  flex-shrink: 0;
+}
+.jot-selection-bar .jot-sel-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 10px;
+  border-right: 1px solid var(--line);
+  flex-shrink: 0; /* 不被 flex 压缩，保持在一排 */
+}
+.jot-selection-bar .jot-sel-group:last-of-type {
+  border-right: none;
+}
+.jot-selection-bar .jot-sel-label {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-right: 2px;
+  letter-spacing: 0.02em;
+}
+.jot-selection-bar .jot-sel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap; /* 中文 chip 不被换行 */
+  flex-shrink: 0;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.jot-selection-bar .jot-sel-chip:hover {
+  background: var(--bg-sunken);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.jot-selection-bar .jot-sel-chip.is-none {
+  color: var(--ink-3);
+  font-style: italic;
+}
+.jot-selection-bar .jot-sel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+  display: inline-block;
+}
+/* 标签色点沿用 currentColor：组件把标签色内联成 chip 的 color，
+   圆点自动跟着走，自建标签也无需额外 CSS。 */
+.jot-selection-bar .jot-sel-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--bg-sunken);
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  transition: transform 0.1s;
+}
+.jot-selection-bar .jot-sel-swatch:hover {
+  transform: scale(1.12);
+}
+.jot-selection-bar .jot-sel-spacer {
+  flex: 1 1 auto;
+}
+.jot-selection-bar .jot-sel-delete {
+  background: var(--red);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+  /* 删除按钮靠最右（margin-left:auto 在 JSX 里不需要——它已是最后一个元素，
+     前面的 spacer 把它推到右端）。与「取消重复」之间留一道小间隔即可；
+     不用 box-shadow 画分隔线——在 overflow-x:auto 容器里会被裁剪出白色凹槽。 */
+  margin-left: 4px;
+}
+.jot-selection-bar .jot-sel-delete:hover {
+  background: #991b1b;
+}
+
+/* 「截止日」按钮 + 「取消重复」按钮 —— 多选批量改 recurringUntil */
+.jot-selection-bar .jot-sel-until,
+.jot-selection-bar .jot-sel-until-clear {
+  background: var(--bg-sunken);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap; /* 单排布局下不让按钮文字被压缩换行 */
+  flex-shrink: 0;
+}
+.jot-selection-bar .jot-sel-until:hover,
+.jot-selection-bar .jot-sel-until-clear:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.jot-selection-bar .jot-sel-until.is-on {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.jot-selection-bar .jot-sel-until-clear {
+  color: var(--ink); /* 与「截止日期」同色（用户反馈：太浅显得像禁用） */
+}
+
+/* ===================== 设置面板里的「系统」section 样式 ===================== */
+.jot-set-sysver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.jot-set-sysver.is-stale {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+
+/* ==================================================================
+   标签管理（设置 → 标签）
+   ------------------------------------------------------------------
+   一行一个标签：色点 + 名字 + 使用次数 + 删除；点色点展开调色板，
+   点名字就地改名。底部是「新增标签」输入行 + 调色板。
+   颜色全部是内联的（用户可自建任意标签），所以这里只管排版不管配色。
+   ================================================================== */
+.jot-tagmgr {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.jot-tagmgr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* 这里曾经是 max-height:260px + overflow-y:auto 的嵌套滚动盒。
+     取色面板（216px 高）一展开就会被它裁掉底部那一行 —— 「应用」按钮
+     直接看不见。而且外层 .jot-set-body 本来就能滚，再套一层滚动纯属
+     滚轮陷阱。所以取消内层滚动，标签多的时候让设置面板自己滚。 */
+}
+.jot-tagmgr-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 6px;
+  border-radius: var(--r-sm);
+  transition: background 0.12s;
+}
+.jot-tagmgr-item:hover {
+  background: var(--bg-sunken);
+}
+.jot-tagmgr-swatch {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.12s;
+}
+.jot-tagmgr-swatch:hover {
+  transform: scale(1.12);
+}
+.jot-tagmgr-swatch.is-open {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+.jot-tagmgr-name {
+  flex: 1 1 auto;
+  min-width: 60px;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: text;
+}
+.jot-tagmgr-name:hover {
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.jot-tagmgr-rename {
+  flex: 1 1 auto;
+  min-width: 60px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 2px 6px;
+  outline: none;
+}
+.jot-tagmgr-badge {
+  flex: 0 0 auto;
+  font-size: 10px;
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 4px;
+  line-height: 15px;
+}
+.jot-tagmgr-del {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--ink-3);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+}
+.jot-tagmgr-del:hover:not(:disabled) {
+  background: var(--red);
+  color: #fff;
+}
+.jot-tagmgr-del:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+.jot-tagmgr-palette {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  margin-top: 2px;
+  background: var(--bg-sunken);
+  border-radius: var(--r-sm);
+}
+.jot-tagmgr-palette.is-inline {
+  flex: 0 1 auto;
+  margin-top: 0;
+  padding: 5px 8px;
+}
+.jot-tagmgr-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.12s;
+}
+.jot-tagmgr-color:hover {
+  transform: scale(1.18);
+}
+.jot-tagmgr-color.is-on {
+  box-shadow: 0 0 0 2px var(--bg-sunken), 0 0 0 3.5px var(--ink-2);
+}
+/* 「更多」按钮：接在 12 个预设色后面，虚线边框提示可展开 */
+.jot-tagmgr-more {
+  height: 16px;
+  padding: 0 6px;
+  border-radius: 999px;
+  border: 1px dashed var(--line-strong);
+  background: none;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.jot-tagmgr-more:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+.jot-tagmgr-more.is-open {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+/* ---------------- 取色面板（自绘，逻辑见 components/ColorPanel.tsx） ---------------- */
+.jot-cpanel {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 10px;
+  margin-top: 4px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  /* 拖手柄时别选中文字 / 别把横向拖动当成滚动 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* 饱和度 × 明度方块：底色是纯色相（组件内联），上面叠「→ 白」「→ 黑」两层渐变 */
+.jot-cpanel-sv {
+  position: relative;
+  height: 128px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  touch-action: none;
+}
+.jot-cpanel-sv-white,
+.jot-cpanel-sv-black {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.jot-cpanel-sv-white {
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+}
+.jot-cpanel-sv-black {
+  background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+}
+/* 手柄活动区。inset 由组件内联给，必须与 ColorPanel.tsx 的 SV_INSET 一致 */
+.jot-cpanel-sv-in {
+  position: absolute;
+  cursor: crosshair;
+  touch-action: none;
+}
+.jot-cpanel-hue {
+  position: relative;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  touch-action: none;
+  background: linear-gradient(
+    to right,
+    #f00 0%,
+    #ff0 17%,
+    #0f0 33%,
+    #0ff 50%,
+    #00f 67%,
+    #f0f 83%,
+    #f00 100%
+  );
+}
+.jot-cpanel-hue-in {
+  position: absolute;
+  inset: 0 7px;
+  cursor: pointer;
+  touch-action: none;
+}
+.jot-cpanel-sv-in:focus-visible,
+.jot-cpanel-hue-in:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+/* 手柄圆点：白圈 + 双层投影，保证在任意底色上都看得见 */
+.jot-cpanel-dot {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.jot-cpanel-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.jot-cpanel-preview {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+}
+.jot-cpanel-hex {
+  flex: 0 1 96px;
+  min-width: 84px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  text-transform: lowercase;
+}
+.jot-cpanel-apply {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.jot-cpanel-hint {
+  margin: 0;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.jot-cpanel-hint.is-bad {
+  color: var(--red);
+}
+.jot-cpanel-hint code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.jot-tagmgr-add {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+.jot-tagmgr-add-input {
+  flex: 0 1 150px;
+  min-width: 110px;
+}
+.jot-tagmgr-tip {
+  margin: 0;
+}

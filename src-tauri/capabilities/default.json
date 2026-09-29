@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "Jot 基础权限：仅托盘/窗口控制，不含文件系统等敏感能力",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
